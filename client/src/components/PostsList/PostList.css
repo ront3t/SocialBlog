@@ -1,0 +1,6 @@
+.container{
+    display: flex;
+    padding: 5rem;
+    padding: 5rem; 
+    justify-content:"center"
+}

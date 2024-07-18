@@ -1,10 +1,9 @@
-import React from 'react';
-import ArticleList from '../components/ArticleList';
+import PostList from '../components/PostsList/PostList';
 
 const Home = () => {
   return (
     <div>
-      <ArticleList />
+      <PostList />
     </div>
   );
 };

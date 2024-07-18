@@ -1,17 +1,15 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './Pages/Home';
 import Login from './Pages/Login/Login';
-import Register from './Pages/Register';
+import Register from './Pages/Register/Register';
 import UserProfile from './Pages/UserProfile';
 import ArticlePage from './Pages/ArticlePage';
-import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
+import Navbar from './components/Navbar/Navbar';
 
 const App = () => {
   return (
     <Router>
       <Navbar />
-      <Sidebar />
       <Routes>
         <Route path="/" Component={Home} />
         <Route path="/login" Component={Login} />
