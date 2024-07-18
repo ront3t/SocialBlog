@@ -70,3 +70,14 @@ export const createPost:RequestHandler<unknown, unknown, IPost, unknown> = async
         next(err)
     }
 };
+
+//TODO: change to update
+export const updatePost:RequestHandler = async (req, res, next) => {
+    try {
+        const {id} = req.params;
+        const post = await PostsModel.findById(id);
+        res.status(200).json(post);
+    } catch (err) {
+        next(err)
+    }
+}

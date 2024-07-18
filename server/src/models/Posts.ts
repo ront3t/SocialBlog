@@ -1,21 +1,13 @@
-import {Schema, model, InferSchemaType} from "mongoose";
-
+import { Schema,InferSchemaType, model} from 'mongoose'
 const postSchema = new Schema(
   {
     userId: {
       type: String,
-      required: true,
     },
-    location: String,
+    title: String,
     description: String,
     picturePath: String,
     userPicturePath: String,
-    likes: {
-      type: Array<string>,
-    },
-    comments: {
-      type: Array<string>,
-    },
   },
   { timestamps: true });
 

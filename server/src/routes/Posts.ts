@@ -12,4 +12,6 @@ router.post("/", PostsController.createPost);
 
 router.delete("/id",PostsController.deletePost)
 
+router.patch("/id",PostsController.updatePost)
+
 export default router;
