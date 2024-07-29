@@ -23,9 +23,9 @@ const PostList = () => {
   // }, []);
 
   return (
-      <div className='container'> 
-        <Post />
-      </div>
+        <div> 
+          <Post />
+        </div>
   );
 };
 
