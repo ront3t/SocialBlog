@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.get("/", PostsController.getPosts);
 
-
 router.get("/:id", PostsController.getPostById);
 
 router.post("/", PostsController.createPost);
