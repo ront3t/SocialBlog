@@ -6,19 +6,10 @@ const UserProfile = () => {
   const { user } = useContext(AuthContext)!;
 
   return (
-    <Container>
-      <Avatar src={user?.profilePictureUrl} alt={user?.username} />
-      <Typography variant="h4">{user?.username}</Typography>
-      <Typography variant="subtitle1">{user?.bio}</Typography>
-      <List>
-        {user?.expertise?.map((expert: string, index: number) => (
-          <ListItem key={index}>
-            <ListItemText primary={expert} />
-          </ListItem>
-        ))}
-      </List>
-    </Container>
-  );
+    <div>
+
+    </div>
+    );
 };
 
 export default UserProfile;

@@ -1,11 +1,10 @@
-import PostList from '../../components/PostsList/PostList';
-
+import PostContaier from '../../components/PostContaier/PostContaier';
 import './Home.css'
 
 const Home = () => {
   return (
     <div className='container'>
-      <PostList />
+      <PostContaier />
     </div>
   );
 };
