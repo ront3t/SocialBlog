@@ -1,8 +1,9 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useState, useEffect, ReactNode } from 'react';
+import { User } from './types';
 
 interface AuthContextProps {
-  user: any;
-  login: (user: any) => void;
+  user: User | null;
+  login: (user: User) => void;
   logout: () => void;
 }
 
