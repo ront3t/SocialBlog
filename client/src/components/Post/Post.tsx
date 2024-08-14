@@ -1,22 +1,32 @@
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
+
+import {CardHeader, CardActions,CardContent, CardMedia, Card, Avatar, Typography, IconButton} from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';  
+import EditIcon from '@mui/icons-material/Edit';
+
+import EditPost from './EditPost';
+
+import { useState } from 'react';
+
 
 const Post = () => {
+  const [isEditMode,setIsEditMode] = useState(false);
+
+  const onEditClick = () => {
+    setIsEditMode(!isEditMode);
+  }
+
+  const onSaveClick = () => {
+    console.log("OK");
+    setIsEditMode(!isEditMode)
+  }
+
   return (
+    (isEditMode? <EditPost onSaveClick={onSaveClick}/>
+    :
     <Card sx={{ width: '30rem', backgroundColor:'#fff', padding:'1rem' }}>
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-          </Avatar>
+          <Avatar aria-label="recipe" />
         }
         title="Shrimp and Chorizo Paella"
         subheader="September 14, 2016"
@@ -29,16 +39,17 @@ const Post = () => {
           if you like.
         </Typography>
       </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
+      <CardActions>
+          <IconButton aria-label="add to favorites">
+            <FavoriteIcon />
+          </IconButton>
+          <IconButton aria-label="edit" onClick={onEditClick}>
+            <EditIcon />
+          </IconButton>
       </CardActions>
+      
     </Card>
-  );
+));
 }
 
 export default Post;

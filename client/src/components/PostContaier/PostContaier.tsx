@@ -9,9 +9,6 @@ const PostContaier = () => {
           <Grid item xs={7}>
             <PostList />
           </Grid>
-          {/* <Grid item xs={3}>
-            <Widgets />
-          </Grid> */}
         </Grid>
       </Container>
     </div>
