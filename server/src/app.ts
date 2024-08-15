@@ -6,7 +6,7 @@ import morgan from 'morgan'
 import createHttpError, {isHttpError} from 'http-errors'
 import cors from 'cors'
 
-import userRoutes from "./routes/User"
+import AuthRoutes from "./routes/Auth"
 import postsRoutes from "./routes/Posts"
 
 ///configurations
@@ -14,12 +14,12 @@ const app = express()
 app.use(express.json())
 dotenv.config()
 app.use(bodyParser.json({limit:"30mb"}))
-app.use(bodyParser.urlencoded({limit:"30mb", extended: true}))
+app.use(bodyParser.urlencoded({extended: true}))
 app.use(morgan('dev'));
 app.use(cors())
 
 ///Routes
-app.use("/api/user",userRoutes)
+app.use("/api/auth",AuthRoutes)
 app.use("/api/posts",postsRoutes)
 
 app.use( (req, res, next) => {
