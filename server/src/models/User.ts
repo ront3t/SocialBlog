@@ -1,4 +1,5 @@
 import mongoose, {Schema, model, InferSchemaType} from "mongoose";
+import Posts from "./Posts";
 
 const UserSchema = new Schema(
   {
@@ -50,6 +51,11 @@ const UserSchema = new Schema(
       type: String,
       default:""
     },
+    likedPosts: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: Posts,
+      default:[],
+    }]
     
   },
   { timestamps: true }
