@@ -5,12 +5,13 @@ import dotenv from "dotenv"
 import morgan from 'morgan'
 import createHttpError, {isHttpError} from 'http-errors'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import {v2 as cloudinary} from "cloudinary"
 
 import AuthRoutes from "./routes/Auth"
 import UserRoutes from "./routes/User"
 import postsRoutes from "./routes/Posts"
-import cookieParser from 'cookie-parser'
+import notificationRoutes from "./routes/Notification"
 
 ///configurations
 const app = express()
@@ -34,12 +35,13 @@ app.use(cors())
 app.use("/api/auth",AuthRoutes)
 app.use("/api/user",UserRoutes)
 app.use("/api/posts",postsRoutes)
+app.use("/api/notifications",notificationRoutes)
 
 app.use( (req, res, next) => {
     next(createHttpError(404, "Endpoint not found"))  
 })
 
-app.use((error:unknown,req:Request, res:Response,next:NextFunction) => {
+app.use((error:unknown,req:Request, res:Response, next:NextFunction) => {
   let errorMessage = "fuck my life";
   let statusCode = 500;
   if (isHttpError(error))
