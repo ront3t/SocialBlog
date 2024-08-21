@@ -2,7 +2,6 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/User";
 import { RequestHandler } from "express";
 import { generateTokenAndSetCookie } from "../utils/genrateToken";
-import { log } from "console";
 
 
 /*USER INTERFACE */

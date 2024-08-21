@@ -5,21 +5,34 @@ import dotenv from "dotenv"
 import morgan from 'morgan'
 import createHttpError, {isHttpError} from 'http-errors'
 import cors from 'cors'
+import {v2 as cloudinary} from "cloudinary"
 
 import AuthRoutes from "./routes/Auth"
+import UserRoutes from "./routes/User"
 import postsRoutes from "./routes/Posts"
+import cookieParser from 'cookie-parser'
 
 ///configurations
 const app = express()
 app.use(express.json())
+
 dotenv.config()
+
+cloudinary.config({
+  cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
+
 app.use(bodyParser.json({limit:"30mb"}))
 app.use(bodyParser.urlencoded({extended: true}))
+app.use(cookieParser())
 app.use(morgan('dev'));
 app.use(cors())
 
 ///Routes
 app.use("/api/auth",AuthRoutes)
+app.use("/api/user",UserRoutes)
 app.use("/api/posts",postsRoutes)
 
 app.use( (req, res, next) => {

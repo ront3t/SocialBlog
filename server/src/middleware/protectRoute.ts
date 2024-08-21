@@ -6,7 +6,6 @@ import { Types } from "mongoose";
 
 export const protectRoute:RequestHandler = async (req,res,next) => {
     try {
-    
         const token = req.cookies.jwt;
         if(!token)
             return res.status(401).json({error:"Unauthorized! no token provided"});
@@ -16,16 +15,14 @@ export const protectRoute:RequestHandler = async (req,res,next) => {
             throw new Error("JWT_SECRET is not defined");
         }
         const decoded = jwt.verify(token, secret) as { userId: Types.ObjectId };
-        
         if(!decoded)
             return res.status(401).json({error:"Unauthorized: Invalid Token"});
 
         const user = await User.findById(decoded.userId).select("-password");
-
         if(!user)
             return res.status(404).json({error:"User not found"});
 
-        req.body.user = user;
+        req.user = user;
         next();
 
     }catch (err) {
