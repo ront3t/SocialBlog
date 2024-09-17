@@ -1,12 +1,15 @@
 import express from "express";
 import * as UserController from "../controllers/User";
+import { protectRoute } from "../middleware/protectRoute";
 
 const router = express.Router();
 
-router.get("/:id", UserController.getUser);
+router.get("/profile/:username",protectRoute, UserController.getUserProfile);
 
-router.post("/register", UserController.register);
+router.get("/suggested",protectRoute, UserController.getSuggestedUsers);
 
-router.delete("/deleteUser",UserController.deleteUser)
+router.post("/follow/:id",protectRoute, UserController.followUnFollowUser)
+
+router.post("/update",protectRoute ,UserController.updateUser)
 
 export default router;
