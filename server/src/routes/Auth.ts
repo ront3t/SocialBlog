@@ -1,7 +1,10 @@
 import express from "express";
 import * as AuthController from "../controllers/Auth";
+import { protectRoute } from "../middleware/protectRoute";
 
 const router = express.Router();
+
+router.get("/me", protectRoute, AuthController.getMe);
 
 router.post("/login", AuthController.login);
 
