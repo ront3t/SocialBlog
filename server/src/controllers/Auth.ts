@@ -50,9 +50,6 @@ export const register:RequestHandler<unknown, unknown, IUser, unknown>  = async 
     }
     
   }catch (err) {
-    console.log(err);
-    console.log(req.body);
-    
     next(err)
   }
 }
@@ -83,3 +80,13 @@ export const logout:RequestHandler = async (req,res, next) => {
     next(err)
   }
 }
+
+export const getMe:RequestHandler = async (req,res, next) => {
+  try {
+    const user = await UserModel.findById(req.user._id).select('-password');
+    res.status(200).json(user);
+  } catch (err) {
+    next(err)
+  }
+}
+

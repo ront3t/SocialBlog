@@ -1,57 +1,98 @@
 import { Link } from "react-router-dom";
-import { useForm } from 'react-hook-form'
 import { MdOutlineMail } from "react-icons/md";
 import { MdPassword } from "react-icons/md";
-import React from "react";
+import React, { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 type FormValues = {
-    username:string;
-    password:string;
+    username: string;
+    password: string;
 }
 
 const LoginPage = () => {
-
-    const {register, handleSubmit, formState:{errors}} = useForm<FormValues>()
+	const [formData, setFormData] = useState<FormValues>({
+		username: '',
+		password: ''
+	});
 	
-    const onSubmit = (data:FormValues) => {
-        console.log(data);
-    }
+	const queryClient = useQueryClient();
+
+	const { mutate, isError, isPending, error } = useMutation({
+		mutationFn: async ({ username, password }: FormValues) => {
+			const res = await fetch("/api/auth/login", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ username, password }),
+			});
+
+			const data = await res.json();
+			if (!res.ok) throw new Error(data.error || "Something went wrong");
+			return data;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({queryKey:['authUser']});
+		},
+		onError: (err) => toast.error('Login failed'),
+	});
+
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		mutate(formData);
+	};
+
+	const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
+		const target = e.target as HTMLInputElement;
+		setFormData({ ...formData, [target.name]: target.value });
+	};
+
 	return (
-		<div className='max-w-screen-xl mx-auto flex h-screen'>
-			<div className='flex-1 flex flex-col justify-center items-center'>
-				<form className='flex gap-4 flex-col' onSubmit={handleSubmit(onSubmit)}>
-					<h1 className='text-4xl font-extrabold text-white'>{"Let's"} go.</h1>
-					<label className='input input-bordered rounded flex items-center gap-2'>
+		<div className="max-w-screen-xl mx-auto flex h-screen">
+			<div className="flex-1 flex flex-col justify-center items-center">
+				<form className="flex gap-4 flex-col" onSubmit={handleSubmit}>
+					<h1 className="text-4xl font-extrabold text-white">{"Let's"} go.</h1>
+
+					<label className="input input-bordered rounded flex items-center gap-2">
 						<MdOutlineMail />
 						<input
-							type='text'
-							className='grow'
-							placeholder='username'
-                            {...register('username', { required: true })} 
+							type="text"
+							className="grow"
+							placeholder="username"
+							name="username"
+							onChange={handleInputChange}
+							value={formData.username}
 						/>
-                        {errors.username && <p className='text-red-500'>username is invalid</p>}
 					</label>
 
-					<label className='input input-bordered rounded flex items-center gap-2'>
+					<label className="input input-bordered rounded flex items-center gap-2">
 						<MdPassword />
 						<input
-							type='password'
-							className='grow'
-							placeholder='Password'
-                            {...register('password', { required: true })} 
+							type="password"
+							className="grow"
+							placeholder="Password"
+							name="password"
+							onChange={handleInputChange}
+							value={formData.password}
 						/>
-					{errors.password && <p className='text-red-500'>password is invalid</p>}
 					</label>
-					<button className='btn rounded-full btn-primary text-white'>Login</button>
+
+					<button className="btn rounded-full btn-primary text-white">
+						{isPending ? 'Loading...' : 'Login'}
+					</button>
+					{isError && <p className="text-red-500">{(error as Error).message}</p>}
 				</form>
-				<div className='flex flex-col gap-2 mt-4'>
-					<p className='text-white text-lg'>{"Don't"} have an account?</p>
-					<Link to='/signup'>
-						<button className='btn rounded-full btn-primary text-white btn-outline w-full'>Sign Up</button>
+
+				<div className="flex flex-col gap-2 mt-4">
+					<p className="text-white text-lg">{"Don't"} have an account?</p>
+					<Link to="/signup">
+						<button className="btn rounded-full btn-primary text-white btn-outline w-full">Sign Up</button>
 					</Link>
 				</div>
 			</div>
 		</div>
 	);
 };
+
 export default LoginPage;
