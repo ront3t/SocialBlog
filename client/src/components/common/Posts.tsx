@@ -1,6 +1,7 @@
 import Post from "./Post";
 import PostSkeleton from "../skeletons/PostSkeleton";
-import { POSTS } from "../../utils/db/dummy";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 type User = {
     username: string;
@@ -11,35 +12,69 @@ type User = {
 type Comment = {
     _id: string;
     text: string;
-    user: User;
+    userId: User;
 };
   
 export type PostValues = {
     _id: string;
     text: string;
     img?: string; // Optional if some posts may not have an image
-    user: User;
+    userId: User;
     comments: Comment[];
     likes: string[]; // Array of user IDs or similar
 };
 
+interface PostsProps {
+	feedType:string,
+}
 
-const Posts = () => {
-	const isLoading = false;
+const Posts = ({feedType}:PostsProps) => {
+
+	const getPostEndPoint = () => {
+		switch(feedType){
+			case 'forYou':
+				return '/api/posts/all';
+			case 'following':
+				return '/api/posts/following'
+			default:
+				return '/api/posts/all'
+		}
+	}
+	
+	const POST_ENDPOINT = getPostEndPoint();
+
+	const {data:posts, isLoading, refetch, isRefetching} = useQuery({
+		queryKey:['posts',feedType],
+		queryFn: async () => {
+			try {
+				const res = await fetch(POST_ENDPOINT)
+				const data = await res.json();
+				if(!res.ok) throw new Error(data.error||'something went wrong');
+				console.log(data)
+				return data as PostValues[];	
+			} catch (err) {
+				if(err instanceof Error)
+					throw new Error(err.message);
+				else
+					console.error('Unexpected error occurred');
+			}
+		},
+		
+	})
 
 	return (
 		<>
-			{isLoading && (
+			{(isLoading|| isRefetching) && (
 				<div className='flex flex-col justify-center'>
 					<PostSkeleton />
 					<PostSkeleton />
 					<PostSkeleton />
 				</div>
 			)}
-			{!isLoading && POSTS?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch 👻</p>}
-			{!isLoading && POSTS && (
+			{!isLoading && !isRefetching && posts?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch 👻</p>}
+			{!isLoading && !isRefetching && posts && (
 				<div>
-					{POSTS.map((post:PostValues) => (
+					{posts.map((post:PostValues) => (
 						<Post key={post._id} post={post} />
 					))}
 				</div>
