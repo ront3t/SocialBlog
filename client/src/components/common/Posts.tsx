@@ -1,9 +1,9 @@
 import Post from "./Post";
 import PostSkeleton from "../skeletons/PostSkeleton";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 
-type User = {
+export type User = {
+	_id:string;
     username: string;
     profileImg: string;
     fullName: string;
