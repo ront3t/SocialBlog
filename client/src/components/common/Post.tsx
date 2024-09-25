@@ -13,9 +13,9 @@ type PostProps = {
     post:PostValues;
   }
   
-const Post:React.FC<PostProps> = ({post}) => {
+const Post = ({post}:PostProps) => {
 	const [comment, setComment] = useState("");
-	const postOwner = post.user;
+	const postOwner = post.userId;
 	const isLiked = false;
 
 	const isMyPost = true;
@@ -84,7 +84,11 @@ const Post:React.FC<PostProps> = ({post}) => {
 								</span>
 							</div>
 							{/* We're using Modal Component from DaisyUI */}
-							<dialog id={`comments_modal${post._id}`} className='modal border-none outline-none'>
+							<dialog
+								ref={commentsModalRef}
+								id={`comments_modal${post._id}`}
+								className='modal border-none outline-none'
+							>
 								<div className='modal-box rounded border border-gray-600'>
 									<h3 className='font-bold text-lg mb-4'>COMMENTS</h3>
 									<div className='flex flex-col gap-3 max-h-60 overflow-auto'>
@@ -98,15 +102,15 @@ const Post:React.FC<PostProps> = ({post}) => {
 												<div className='avatar'>
 													<div className='w-8 rounded-full'>
 														<img
-															src={comment.user.profileImg || "/avatar-placeholder.png"}
+															src={comment.userId.profileImg || "/avatar-placeholder.png"}
 														/>
 													</div>
 												</div>
 												<div className='flex flex-col'>
 													<div className='flex items-center gap-1'>
-														<span className='font-bold'>{comment.user.fullName}</span>
+														<span className='font-bold'>{comment.userId.fullName}</span>
 														<span className='text-gray-700 text-sm'>
-															@{comment.user.username}
+															@{comment.userId.username}
 														</span>
 													</div>
 													<div className='text-sm'>{comment.text}</div>

@@ -3,13 +3,43 @@ import React, { useRef, useState } from "react";
 import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { IoCloseSharp } from "react-icons/io5";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+
+interface PostValues{
+	text?:string,
+	img?:string | null,
+}
 
 const CreatePost = () => {
 	const [text, setText] = useState<string>("");
 	const [img, setImg] = useState<string | null>(null);
-    const [isPending] = useState<boolean>(false);
-    const [isError] = useState<boolean>(false);
 	const imgRef = useRef<HTMLInputElement>(null);
+    
+	const {data:authUser} = useQuery({queryKey:['authUser']});
+	const queryClient = useQueryClient();
+
+	const {mutate, isPending, error, isError} = useMutation({
+		mutationFn: async ({text,img}:PostValues) => {
+			const res = await fetch('/api/posts/create',{
+				method:'POST',
+				headers:{
+					'content-type':'application/json'
+				},
+				body:JSON.stringify({text,img})
+			})
+        	const data = await res.json();
+        	if(!res.ok) throw new Error(data.error || "Something went wrong");
+        	return data;
+		},
+		onError: (err) => toast.error('oops'),
+		onSuccess: () => {
+			setText('');
+			setImg(null);
+			toast.success('Horray!')
+			queryClient.invalidateQueries({queryKey:['posts']})
+		}
+	})
 
 	const data = {
 		profileImg: "/avatars/boy1.png",
@@ -24,7 +54,7 @@ const CreatePost = () => {
     }
 	const handleSubmit = (e:React.FormEvent) => {
 		e.preventDefault();
-		alert("Post created successfully");
+		mutate({text,img});
 	};
     
     const handleImgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
