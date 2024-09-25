@@ -8,7 +8,7 @@ router.get("/all",protectRoute, PostsController.getAllPosts);
 
 router.post("/create",protectRoute, PostsController.createPost);
 
-router.delete("/delete/:id",protectRoute, PostsController.deletePost)
+router.delete("/:id",protectRoute, PostsController.deletePost)
 
 router.post("/like/:id",protectRoute, PostsController.likeUnLikePost)
 

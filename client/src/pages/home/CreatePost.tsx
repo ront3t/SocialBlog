@@ -5,6 +5,7 @@ import { BsEmojiSmileFill } from "react-icons/bs";
 import { IoCloseSharp } from "react-icons/io5";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { User } from "../../components/common/Posts";
 
 interface PostValues{
 	text?:string,
@@ -16,10 +17,10 @@ const CreatePost = () => {
 	const [img, setImg] = useState<string | null>(null);
 	const imgRef = useRef<HTMLInputElement>(null);
     
-	const {data:authUser} = useQuery({queryKey:['authUser']});
+	const {data:authUser} = useQuery<User>({queryKey:['authUser']});
 	const queryClient = useQueryClient();
 
-	const {mutate, isPending, error, isError} = useMutation({
+	const {mutate, isPending} = useMutation({
 		mutationFn: async ({text,img}:PostValues) => {
 			const res = await fetch('/api/posts/create',{
 				method:'POST',
@@ -32,7 +33,7 @@ const CreatePost = () => {
         	if(!res.ok) throw new Error(data.error || "Something went wrong");
         	return data;
 		},
-		onError: (err) => toast.error('oops'),
+		onError: (err) => toast.error(err?.message),
 		onSuccess: () => {
 			setText('');
 			setImg(null);
@@ -40,10 +41,6 @@ const CreatePost = () => {
 			queryClient.invalidateQueries({queryKey:['posts']})
 		}
 	})
-
-	const data = {
-		profileImg: "/avatars/boy1.png",
-	};
 
     const onImgClick = () => {
         imgRef.current?.click();
@@ -72,7 +69,7 @@ const CreatePost = () => {
 		<div className='flex p-4 items-start gap-4 border-b border-gray-700'>
 			<div className='avatar'>
 				<div className='w-8 rounded-full'>
-					<img src={data.profileImg || "/avatar-placeholder.png"} />
+					<img src={authUser?.profileImg || "/avatar-placeholder.png"} />
 				</div>
 			</div>
 			<form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>
@@ -110,7 +107,6 @@ const CreatePost = () => {
 						{isPending ? "Posting..." : "Post"}
 					</button>
 				</div>
-				{isError && <div className='text-red-500'>Something went wrong</div>}
 			</form>
 		</div>
 	);

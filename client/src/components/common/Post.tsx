@@ -7,7 +7,10 @@ import { FaRegHeart } from "react-icons/fa";
 import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 
-import {PostValues} from './Posts'
+import {PostValues, User} from './Posts'
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import LoadingSpinner from "./LoadingSpinner";
 
 type PostProps = {
     post:PostValues;
@@ -15,11 +18,29 @@ type PostProps = {
   
 const Post = ({post}:PostProps) => {
 	const [comment, setComment] = useState("");
+	const {data:authUser} = useQuery<User>({queryKey:['authUser']})
+	const queryClient = useQueryClient()
+	const {mutate, isPending ,error, isError} = useMutation({
+		mutationFn: async () => {
+			const res = await fetch(`/api/posts/${post._id}`,{
+				method:'DELETE',
+			})
+			const data = await res.json();
+			if(!res.ok) throw new Error(data.error || 'something went wrong');
+			return data;
+		},
+		onError: () => { toast.error('bummer')},
+		onSuccess: () => {
+			toast.success('Deleted successfully');
+			queryClient.invalidateQueries({queryKey:['posts']});
+		}
+	})
+	
 	const postOwner = post.userId;
 	const isLiked = false;
 
-	const isMyPost = true;
-
+	const isMyPost = authUser?._id === post.userId._id;
+	
 	const formattedDate = "1h";
 
 	const isCommenting = false;
@@ -30,10 +51,11 @@ const Post = ({post}:PostProps) => {
 		commentsModalRef.current?.showModal();
 	};
 
-	const handleDeletePost = () => {};
+	const handleDeletePost = () => {
+		mutate();
+	};
 
 	const handlePostComment = (e:React.FormEvent) => {
-		e.preventDefault();
 	};
 
 	const handleLikePost = () => {};
@@ -58,7 +80,8 @@ const Post = ({post}:PostProps) => {
 						</span>
 						{isMyPost && (
 							<span className='flex justify-end flex-1'>
-								<FaTrash className='cursor-pointer hover:text-red-500' onClick={handleDeletePost} />
+								{isPending? <LoadingSpinner size='sm' />
+								:<FaTrash className='cursor-pointer hover:text-red-500' onClick={handleDeletePost} />}
 							</span>
 						)}
 					</div>
