@@ -60,7 +60,6 @@ export const followUnFollowUser:RequestHandler<{id:string}, unknown, unknown, un
         }
         
     } catch (err) {    
-        console.log(err)
         next(err)
     }
 }

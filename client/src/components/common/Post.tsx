@@ -8,7 +8,7 @@ import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 
 import {PostValues, User} from './Posts'
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
 
@@ -18,9 +18,11 @@ type PostProps = {
   
 const Post = ({post}:PostProps) => {
 	const [comment, setComment] = useState("");
-	const {data:authUser} = useQuery<User>({queryKey:['authUser']})
-	const queryClient = useQueryClient()
-	const {mutate, isPending ,error, isError} = useMutation({
+	const {data:authUser} = useQuery<User>({queryKey:['authUser']});
+
+	const queryClient = useQueryClient();
+	
+	const {mutate, isPending: isDeleting} = useMutation({
 		mutationFn: async () => {
 			const res = await fetch(`/api/posts/${post._id}`,{
 				method:'DELETE',
@@ -35,9 +37,35 @@ const Post = ({post}:PostProps) => {
 			queryClient.invalidateQueries({queryKey:['posts']});
 		}
 	})
+
+	const {mutate:likedPost, isPending:isLiking} =useMutation({
+		mutationFn: async () => {
+			const res = await fetch(`/api/posts/like/${post._id}`,
+			{
+				method:'POST',
+			});
+
+			const data = await res.json();
+			if(!res.ok) throw new Error(data.error || 'something went wrong');
+			return data;
+		},
+		onError: (err) => { toast.error(err?.message);},
+		onSuccess: (updatedLikes) => {
+			toast.success(isLiked? 'unlike':'like');
+			//queryClient.invalidateQueries({queryKey:['posts']});
+			queryClient.setQueryData(['posts'], (oldData:PostValues[] = []) => {
+				return oldData.map( p => {
+					if(p._id === post._id){
+						return {...p,likes:updatedLikes}
+					}
+					return p;
+				})
+			})
+		}
+	})
 	
 	const postOwner = post.userId;
-	const isLiked = false;
+	const isLiked = post.likes.includes(authUser? authUser._id: '');
 
 	const isMyPost = authUser?._id === post.userId._id;
 	
@@ -58,7 +86,10 @@ const Post = ({post}:PostProps) => {
 	const handlePostComment = (e:React.FormEvent) => {
 	};
 
-	const handleLikePost = () => {};
+	const handleLikePost = () => {
+		if(isLiking) return;
+		likedPost();
+	};
 
 	return (
 		<>
@@ -80,7 +111,7 @@ const Post = ({post}:PostProps) => {
 						</span>
 						{isMyPost && (
 							<span className='flex justify-end flex-1'>
-								{isPending? <LoadingSpinner size='sm' />
+								{isDeleting? <LoadingSpinner size='sm' />
 								:<FaTrash className='cursor-pointer hover:text-red-500' onClick={handleDeletePost} />}
 							</span>
 						)}
@@ -152,11 +183,7 @@ const Post = ({post}:PostProps) => {
 											onChange={(e) => setComment(e.target.value)}
 										/>
 										<button className='btn btn-primary rounded-full btn-sm text-white px-4'>
-											{isCommenting ? (
-												<span className='loading loading-spinner loading-md'></span>
-											) : (
-												"Post"
-											)}
+											{isCommenting ? (<LoadingSpinner size='md' />) : "Post"}
 										</button>
 									</form>
 								</div>
@@ -169,14 +196,13 @@ const Post = ({post}:PostProps) => {
 								<span className='text-sm text-slate-500 group-hover:text-green-500'>0</span>
 							</div>
 							<div className='flex gap-1 items-center group cursor-pointer' onClick={handleLikePost}>
-								{!isLiked && (
-									<FaRegHeart className='w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500' />
-								)}
-								{isLiked && <FaRegHeart className='w-4 h-4 cursor-pointer text-pink-500 ' />}
+								{isLiking? <LoadingSpinner size='sm' />
+								:isLiked ? (<FaRegHeart className='w-4 h-4 cursor-pointer text-pink-500 group-hover:text-pink-500' />)
+								: (<FaRegHeart className='w-4 h-4 cursor-pointer text-slate-500 ' />)}
 
 								<span
-									className={`text-sm text-slate-500 group-hover:text-pink-500 ${
-										isLiked ? "text-pink-500" : ""
+									className={`text-sm  group-hover:text-pink-500 ${
+										isLiked ? "text-pink-500" : "text-slate-500"
 									}`}
 								>
 									{post.likes.length}

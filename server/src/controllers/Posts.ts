@@ -47,10 +47,13 @@ export const likeUnLikePost:RequestHandler<{id:string}, unknown, unknown, unknow
 
       if(post.likes.includes(userId))
       {
+        const updatedLikes = post.likes.filter((id) => id.toString() !== userId.toString())
+        
         //unlike
         await Post.updateOne({_id: postId},{$pull: { likes: userId}})
-        await User.updateOne({_id: userId},{$pull: { likedPosts: postId}})
-        return res.status(200).json({message: 'Post unliked successfully'})
+        await User.updateOne({_id: userId},{$pull: { likdPosts: postId}})
+
+        return res.status(200).json(updatedLikes)
       }
       else{
         //like
@@ -64,7 +67,8 @@ export const likeUnLikePost:RequestHandler<{id:string}, unknown, unknown, unknow
             type: 'like'
         })
         await notification.save()
-        res.status(200).json({message: 'Post liked successfully'});
+
+        return res.status(200).json(post.likes);
       }
     } catch (err) {
       next(err);
