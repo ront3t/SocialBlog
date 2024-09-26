@@ -234,7 +234,7 @@ const ProfilePage = () => {
             </>
           )}
 
-          <Posts />
+          <Posts feedType={feedType} />
         </div>
       </div>
     </>

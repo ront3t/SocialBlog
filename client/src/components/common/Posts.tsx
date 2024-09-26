@@ -44,13 +44,12 @@ const Posts = ({feedType}:PostsProps) => {
 	const POST_ENDPOINT = getPostEndPoint();
 
 	const {data:posts, isLoading, refetch, isRefetching} = useQuery({
-		queryKey:['posts',feedType],
+		queryKey:['posts'],
 		queryFn: async () => {
 			try {
 				const res = await fetch(POST_ENDPOINT)
 				const data = await res.json();
 				if(!res.ok) throw new Error(data.error||'something went wrong');
-				console.log(data)
 				return data as PostValues[];	
 			} catch (err) {
 				if(err instanceof Error)

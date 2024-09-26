@@ -16,7 +16,6 @@ const EditProfileModal = () => {
 	const {register, handleSubmit} = useForm<FormValues>();
 
     const onSubmit = (data:FormValues) => {
-        console.log(data);
         alert("Profile updated successfully");
     }
     
