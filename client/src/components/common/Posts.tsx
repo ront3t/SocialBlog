@@ -22,6 +22,7 @@ export type PostValues = {
     userId: User;
     comments: Comment[];
     likes: string[]; // Array of user IDs or similar
+	createdAt: Date;
 };
 
 interface PostsProps {
