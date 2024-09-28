@@ -6,14 +6,14 @@ import LoginPage from './pages/auth/login/LoginPage';
 import Sidebar from './components/common/Sidebar';
 import RightPanel from './components/common/RightPanel';
 import NotificationPage from './pages/notification/NotificationPage';
-import ProfilePage from './pages/profille/ProfilePage';
+import ProfilePage, { User } from './pages/profille/ProfilePage';
 import { Toaster } from 'react-hot-toast';
 import { useQuery } from '@tanstack/react-query';
 import LoadingSpinner from './components/common/LoadingSpinner';
 
 function App() {
 
-  const { data:authUser , isLoading, error, isError } = useQuery({
+  const { data:authUser , isLoading} = useQuery({
     queryKey: ['authUser'],
     queryFn: async () => {
       try {
@@ -23,7 +23,7 @@ function App() {
         if (!res.ok) {
           throw new Error('Something went wrong');
         }
-        return data;
+        return data as User;
       } catch (err) {
         if (err instanceof Error) {
           throw new Error(err.message);
@@ -32,7 +32,7 @@ function App() {
         }
       }
     },
-    retry: false,
+    retry: true,
   });
 
   if(isLoading){
@@ -50,7 +50,7 @@ function App() {
         <Route path='notifications' element={ authUser? <NotificationPage />: <Navigate to='/login'/>}/>
         <Route path ='/signup' element={ !authUser? <SignUpPage />: <Navigate to='/'/>}/>
         <Route path ='/login' element={ !authUser? <LoginPage />: <Navigate to='/'/>}/>
-        <Route path ='/profile/:username' element={ authUser?<ProfilePage />: <Navigate to='/login'/>}/>
+        <Route path ='/profile/:username' element={ authUser? <ProfilePage />: <Navigate to='/login'/>}/>
       </Routes>
       { authUser && <RightPanel />}
       <Toaster />
