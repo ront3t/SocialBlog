@@ -18,6 +18,6 @@ router.get("/likes/:id", protectRoute, PostsController.getLikedPosts)
 
 router.get("/following", protectRoute, PostsController.getFollowingPosts)
 
-router.get("/:id", protectRoute, PostsController.getUserPosts)
+router.get("/user/:username", protectRoute, PostsController.getUserPosts)
 
 export default router;

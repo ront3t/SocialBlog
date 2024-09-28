@@ -124,7 +124,7 @@ const Post = ({post}:PostProps) => {
 				<div className='flex flex-col flex-1'>
 					<div className='flex gap-2 items-center'>
 						<Link to={`/profile/${postOwner.username}`} className='font-bold'>
-							{postOwner.fullName}
+							{postOwner.fullname}
 						</Link>
 						<span className='text-gray-700 flex gap-1 text-sm'>
 							<Link to={`/profile/${postOwner.username}`}>@{postOwner.username}</Link>
@@ -184,7 +184,7 @@ const Post = ({post}:PostProps) => {
 												</div>
 												<div className='flex flex-col'>
 													<div className='flex items-center gap-1'>
-														<span className='font-bold'>{comment.userId.fullName}</span>
+														<span className='font-bold'>{comment.userId.fullname}</span>
 														<span className='text-gray-700 text-sm'>
 															@{comment.userId.username}
 														</span>

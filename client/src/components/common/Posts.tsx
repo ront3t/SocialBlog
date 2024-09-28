@@ -6,7 +6,7 @@ export type User = {
 	_id:string;
     username: string;
     profileImg: string;
-    fullName: string;
+    fullname: string;
 };
   
 type Comment = {
@@ -27,24 +27,30 @@ export type PostValues = {
 
 interface PostsProps {
 	feedType:string,
+	username?:string,
+	userId?:string,
 }
 
-const Posts = ({feedType}:PostsProps) => {
+const Posts = ({feedType,username,userId}:PostsProps) => {
 
 	const getPostEndPoint = () => {
 		switch(feedType){
 			case 'forYou':
 				return '/api/posts/all';
 			case 'following':
-				return '/api/posts/following'
+				return '/api/posts/following';
+			case 'posts':
+				return `/api/posts/user/${username}`;
+			case 'liked':
+				return `/api/posts/likes/${userId}`;
 			default:
-				return '/api/posts/all'
+				return '/api/posts/all';
 		}
 	}
 	
 	const POST_ENDPOINT = getPostEndPoint();
 
-	const {data:posts, isLoading, refetch, isRefetching} = useQuery({
+	const {data:posts, isLoading, isRefetching} = useQuery({
 		queryKey:['posts'],
 		queryFn: async () => {
 			try {

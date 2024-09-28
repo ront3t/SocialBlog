@@ -5,13 +5,7 @@ import { BiLogOut } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
-interface AuthUser {
-	username: string;
-	fullname: string;
-	profileImg?: string; // optional field
-  }
-  
+import { User } from "../../pages/profille/ProfilePage";
 
 const Sidebar = () => {
   const queryClient = useQueryClient();
@@ -28,14 +22,14 @@ const Sidebar = () => {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong");
-      return data as AuthUser;
+      return data as User;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
     onError: (err) => toast.error("Logout Failed"),
   });
 
   // Fetch authenticated user data
-  const { data: authUser, isLoading, isError: isUserError } = useQuery<AuthUser| null>({
+  const { data: authUser, isLoading, isError: isUserError } = useQuery<User| null>({
     queryKey: ["authUser"],
   });
 
