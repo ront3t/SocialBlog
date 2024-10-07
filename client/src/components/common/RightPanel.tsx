@@ -15,7 +15,7 @@ const RightPanel = () => {
 					method:'GET'
 				})
 				const data = await res.json();
-				if(!res.ok) throw new Error(data.error || 'somthing went wrong');
+				if(!res.ok) throw new Error(data.error || 'something went wrong');
 				return data;
 			} catch (err) {
 				if(err instanceof Error)
@@ -57,7 +57,7 @@ const RightPanel = () => {
 									</div>
 									<div className='flex flex-col'>
 										<span className='font-semibold tracking-tight truncate w-28'>
-											{user.fullName}
+											{user.fullname}
 										</span>
 										<span className='text-sm text-slate-500'>@{user.username}</span>
 									</div>

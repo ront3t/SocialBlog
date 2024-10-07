@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import Posts from "../../components/common/Posts";
@@ -9,8 +9,10 @@ import { FaArrowLeft } from "react-icons/fa";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { useQuery } from "@tanstack/react-query";
+import {  useQuery } from "@tanstack/react-query";
 import { formatMemberSinceDate } from "../../utils/formatPostDate";
+import useFollow from "../../hooks/useFollow";
+import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
 
 export interface User {
   _id: string;
@@ -25,6 +27,7 @@ export interface User {
   createdAt: Date;
 }
 
+
 const ProfilePage = () => {
   const [coverImg, setCoverImg] = useState<string | null>(null);
   const [profileImg, setProfileImg] = useState<string | null>(null);
@@ -35,8 +38,11 @@ const ProfilePage = () => {
 
   const {username} = useParams<{username:string}>();
 
+  const {follow, isPending} = useFollow();
+  const {data:authUser} =useQuery<User>({queryKey:['authUser']});
+
   const {data:user, isLoading, refetch, isRefetching} = useQuery({
-    queryKey: ['userProfile',username],
+    queryKey: ['userProfile'],
     queryFn: async () => {
       try {
         const res = await fetch(`/api/user/profile/${username}`);
@@ -49,12 +55,18 @@ const ProfilePage = () => {
         console.error('shooooot');        
       }
     },
-    enabled: !!username, // Ensures the query runs only when username is available
+    //enabled: !!username, // Ensures the query runs only when username is available
   })
 
-  const memberSinceDate = formatMemberSinceDate(user? user.createdAt : new Date())
+	const {updateProfile,isUpdatingProfile} = useUpdateUserProfile();
 
-  const isMyProfile = user?.username === username;; 
+  useEffect(()=>{
+    refetch();
+  },[username,refetch])
+
+  const memberSinceDate = formatMemberSinceDate(user? user.createdAt : new Date())
+  const amIFollowing = authUser?.following.includes(user? user._id: '')
+  const isMyProfile = user?._id === authUser?._id
 
   const handleImgChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -76,6 +88,12 @@ const ProfilePage = () => {
       reader.readAsDataURL(file);
     }
   };
+
+  const handleUpdateClick = async () => {
+    await updateProfile({coverImg,profileImg});
+    setCoverImg(null);
+    setProfileImg(null);
+  }
 
   return (
     <>
@@ -144,21 +162,21 @@ const ProfilePage = () => {
                 </div>
               </div>
               <div className="flex justify-end px-4 mt-5">
-                {isMyProfile && <EditProfileModal />}
-                {!isMyProfile && (
+                {isMyProfile ?<EditProfileModal />
+                :(
                   <button
                     className="btn btn-outline rounded-full btn-sm"
-                    onClick={() => alert("Followed successfully")}
+                    onClick={() => follow(user._id)}
                   >
-                    Follow
+                    {isPending? 'loading...': amIFollowing? 'unFollow': 'Follow'}
                   </button>
                 )}
                 {(coverImg || profileImg) && (
                   <button
                     className="btn btn-primary rounded-full btn-sm text-white px-4 ml-2"
-                    onClick={() => alert("Profile updated successfully")}
+                    onClick={handleUpdateClick}
                   >
-                    Update
+                    {isUpdatingProfile? 'Updating': 'Save'}
                   </button>
                 )}
               </div>
