@@ -1,11 +1,15 @@
+import { Link } from "react-router-dom";
+
 import { MdHomeFilled } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
-import { Link } from "react-router-dom";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { User } from "../../pages/profille/ProfilePage";
+
+import {IUser as User} from '../../types/user';
+
 
 const Sidebar = () => {
   const queryClient = useQueryClient();
