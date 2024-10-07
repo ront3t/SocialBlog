@@ -104,6 +104,7 @@ const ProfilePage = () => {
                   src={coverImg || user.coverImg || "/cover.png"}
                   className="h-52 w-full object-cover"
                   alt="cover image"
+                  loading="lazy"
                 />
                 {isMyProfile && (
                   <div
@@ -136,6 +137,7 @@ const ProfilePage = () => {
                         "/avatar-placeholder.png"
                       }
                       alt="Profile"
+                      loading="lazy"
                     />
                     <div className="absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer">
                       {isMyProfile && (

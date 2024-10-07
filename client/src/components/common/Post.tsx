@@ -1,23 +1,25 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { FaRegComment } from "react-icons/fa";
+import { FaRegComment,FaTrash, FaRegHeart, FaRegBookmark } from "react-icons/fa";
 import { BiRepost } from "react-icons/bi";
-import { FaRegHeart } from "react-icons/fa";
-import { FaRegBookmark } from "react-icons/fa6";
-import { FaTrash } from "react-icons/fa";
 
-import {PostValues, User} from './Posts'
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import toast from "react-hot-toast";
+
 import LoadingSpinner from "./LoadingSpinner";
+
 import { formatPostDate } from "../../utils/formatPostDate";
+
+import { PostValues } from "../../types/post";
+import {IUser as User} from '../../types/user'
 
 type PostProps = {
     post:PostValues;
   }
   
-const Post = ({post}:PostProps) => {
+const Post = React.memo(({post}:PostProps) => {
 	const [comment, setComment] = useState('');
 	const {data:authUser} = useQuery<User>({queryKey:['authUser']});
 
@@ -108,17 +110,17 @@ const Post = ({post}:PostProps) => {
 		commentPost();
 	};
 
-	const handleLikePost = () => {
+	const handleLikePost = useCallback(() => {
 		if(isLiking) return;
 		likedPost();
-	};
+	},[])
 
 	return (
 		<>
 			<div className='flex gap-2 items-start p-4 border-b border-gray-700'>
 				<div className='avatar'>
 					<Link to={`/profile/${postOwner.username}`} className='w-8 rounded-full overflow-hidden'>
-						<img src={postOwner.profileImg || "/avatar-placeholder.png"} />
+						<img src={postOwner.profileImg || "/avatar-placeholder.png"} loading="lazy"/>
 					</Link>
 				</div>
 				<div className='flex flex-col flex-1'>
@@ -144,6 +146,7 @@ const Post = ({post}:PostProps) => {
 							<img
 								src={post.img}
 								className='h-80 object-contain rounded-lg border border-gray-700'
+								loading="lazy"
 								alt=''
 							/>
 						)}
@@ -179,6 +182,7 @@ const Post = ({post}:PostProps) => {
 													<div className='w-8 rounded-full'>
 														<img
 															src={comment.userId.profileImg || "/avatar-placeholder.png"}
+															loading="lazy"
 														/>
 													</div>
 												</div>
@@ -239,5 +243,6 @@ const Post = ({post}:PostProps) => {
 			</div>
 		</>
 	);
-};
+});
+
 export default Post;
