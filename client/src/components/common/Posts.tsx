@@ -2,35 +2,9 @@ import Post from "./Post";
 import PostSkeleton from "../skeletons/PostSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { PostValues, PostsProps } from "../../types/post";  
 
-export type User = {
-	_id:string;
-    username: string;
-    profileImg: string;
-    fullname: string;
-};
   
-type Comment = {
-    _id: string;
-    text: string;
-    userId: User;
-};
-  
-export type PostValues = {
-    _id: string;
-    text: string;
-    img?: string; // Optional if some posts may not have an image
-    userId: User;
-    comments: Comment[];
-    likes: string[]; // Array of user IDs or similar
-	createdAt: Date;
-};
-
-interface PostsProps {
-	feedType:string,
-	username?:string,
-	userId?:string,
-}
 
 const Posts = ({feedType,username,userId}:PostsProps) => {
 

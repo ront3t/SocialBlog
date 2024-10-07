@@ -14,19 +14,7 @@ import { formatMemberSinceDate } from "../../utils/formatPostDate";
 import useFollow from "../../hooks/useFollow";
 import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
 
-export interface User {
-  _id: string;
-  fullname: string;
-  username: string;
-  profileImg: string;
-  coverImg: string;
-  bio: string;
-  link: string;
-  following: string[];
-  followers: string[];
-  createdAt: Date;
-}
-
+import { IUser as User } from "../../types/user";
 
 const ProfilePage = () => {
   const [coverImg, setCoverImg] = useState<string | null>(null);
@@ -55,7 +43,6 @@ const ProfilePage = () => {
         console.error('shooooot');        
       }
     },
-    //enabled: !!username, // Ensures the query runs only when username is available
   })
 
 	const {updateProfile,isUpdatingProfile} = useUpdateUserProfile();

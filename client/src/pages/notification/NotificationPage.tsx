@@ -7,15 +7,9 @@ import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { User } from "../../components/common/Posts";
 
-interface Notification {
-	_id:string,
-	from:User,
-	to:User,
-	type:string,
-	read:boolean,
-}
+import {INotification as Notification} from '../../types/notification'
+
 
 const NotificationPage = () => {
 

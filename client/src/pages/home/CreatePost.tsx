@@ -3,14 +3,13 @@ import React, { useRef, useState } from "react";
 import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { IoCloseSharp } from "react-icons/io5";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { User } from "../../components/common/Posts";
 
-interface PostValues{
-	text?:string,
-	img?:string | null,
-}
+import { IUser as User} from '../../types/user';
+import { CreatePostValues as PostValues } from "../../types/post";
+
 
 const CreatePost = () => {
 	const [text, setText] = useState<string>("");
