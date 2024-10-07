@@ -10,6 +10,6 @@ router.get("/suggested",protectRoute, UserController.getSuggestedUsers);
 
 router.post("/follow/:id",protectRoute, UserController.followUnFollowUser)
 
-router.post("/update",protectRoute ,UserController.updateUser)
+router.put("/update",protectRoute ,UserController.updateUser)
 
 export default router;

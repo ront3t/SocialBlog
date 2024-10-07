@@ -11,7 +11,7 @@ interface ICreatePost{
 }
 
 interface ICommentPost{
-    text?: string
+    text: string
 }
 
 
@@ -169,7 +169,7 @@ export const getLikedPosts:RequestHandler = async (req,res,next) => {
             select: "-password"
         });
     
-        res.status(200).json({likedPosts});    
+        res.status(200).json(likedPosts);    
     } catch (err) {
         next(err)
     }

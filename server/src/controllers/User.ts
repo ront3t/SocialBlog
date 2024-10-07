@@ -123,7 +123,7 @@ export const updateUser:RequestHandler<unknown, unknown, IUser, unknown>  = asyn
             if(!isMatch)
                 return res.status(400).json({error: "Current password is incorrect"})
             if(newPassword.length<6)
-                return res.status(200).json({error:"Password must be at least 6 characters"})
+                return res.status(400).json({error:"Password must be at least 6 characters"})
 
             const salt = await bcrypt.genSalt(10);
             user.password = await bcrypt.hash(newPassword,salt);
